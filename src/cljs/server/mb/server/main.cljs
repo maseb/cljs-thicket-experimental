@@ -4,10 +4,9 @@
             [cljs.nodejs :as nodejs]
             [cljs.core.async :refer [put! chan <!]]))
 
-(def -test-configs #js [#js {"global" #js { "port" 3000 }
-                             "global+test" #js { "port" 3001  }}])
+(def t (js/require "thicket"))
 
-(def -test-scopes #js ["global", "test"])
+(def log (thicket.logging/logger "mb.server.main"))
 
 (defn default-middlewear [req res next]
   (do
@@ -19,18 +18,32 @@
         app (express)]
     (.use app default-middlewear)
     (.listen app port (fn []
-                   (println "Listening on port" port)
-                   ))))
+                   (.info log "Listening on port" port)))))
+
+(defn up [config]
+  (.debug log "Going up")
+  (let [port (.getOrError config "port")]
+    (.debug log "Starting server on port" port)
+    (start-server port)))
+
+(defn down [config]
+  (.debug log "Going down"))
 
 (defn -main [& args]
+  (aset js/goog "global" "setTimeout" js/setTimeout)
+  (thicket.logging/root-set-log-level! "Debug")
+  (thicket.logging/root-add-appender! (thicket.logging/console-log-appender))
 
+  (go (let [[err container] (<! (thicket.appkit/bootstrap up down))]
+        (.start container))))
 
-  (let [config (thicket.configuration/resolve -test-scopes -test-configs)
-        port (.-port config)]
-
-    (do
-      (println "Starting server on port" port)
-      (start-server port))))
+  ;
+  ;(let [config (thicket.configuration/resolve -test-scopes -test-configs)
+  ;      port (.-port config)]
+  ;
+  ;  (do
+  ;    (println "Starting server on port" port)
+  ;    (start-server port))))
 
 (nodejs/enable-util-print!)
 (set! *main-cli-fn* -main)
