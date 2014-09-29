@@ -1,6 +1,6 @@
 {
   "global" : {
     "port" : 80,
-    "static-directories" : ["app/public"]
+    "static-directories" : ["app/public", "build/client"]
   }
 }

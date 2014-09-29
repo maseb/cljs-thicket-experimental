@@ -13,10 +13,17 @@
     (.send res "Hello, world")
     (next)))
 
-(defn start-server [port]
+(defn start-server [config]
   (let [express (js/require "express")
-        app (express)]
+        app (express)
+        port (.getOrError config "port")
+        static-dirs (js->clj (.getOrError config "static-directories"))]
+
+    (doseq [dir static-dirs]
+      (.use app (.static express dir)))
+
     (.use app default-middlewear)
+
     (.listen app port (fn []
                    (.info log "Listening on port" port)))))
 
@@ -24,7 +31,7 @@
   (.debug log "Going up")
   (let [port (.getOrError config "port")]
     (.debug log "Starting server on port" port)
-    (start-server port)))
+    (start-server config)))
 
 (defn down [config]
   (.debug log "Going down"))
