@@ -34,16 +34,8 @@
   (thicket.logging/root-set-log-level! "Debug")
   (thicket.logging/root-add-appender! (thicket.logging/console-log-appender))
 
-  (go (let [[err container] (<! (thicket.appkit/bootstrap up down))]
+  (go (let [container (<! (thicket.appkit/bootstrap up down))]
         (.start container))))
-
-  ;
-  ;(let [config (thicket.configuration/resolve -test-scopes -test-configs)
-  ;      port (.-port config)]
-  ;
-  ;  (do
-  ;    (println "Starting server on port" port)
-  ;    (start-server port))))
 
 (nodejs/enable-util-print!)
 (set! *main-cli-fn* -main)

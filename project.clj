@@ -7,6 +7,7 @@
                  [org.clojure/clojurescript "0.0-2311"]]
 
   :plugins [[lein-cljsbuild "1.0.4-SNAPSHOT"]
+            [org.bodil/lein-noderepl "0.1.11"]
             [lein-npm "0.4.0"]]
 
   :source-paths ["src"]
