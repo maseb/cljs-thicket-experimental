@@ -1,4 +1,4 @@
-(defproject cljs-mies "0.1.0-SNAPSHOT"
+(defproject cljs-thicket-experimental "0.1.0-SNAPSHOT"
   :description "FIXME: write this!"
   :url "http://example.com/FIXME"
 
