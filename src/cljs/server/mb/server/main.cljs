@@ -4,16 +4,16 @@
             [cljs.nodejs :as nodejs]
             [cljs.core.async :refer [put! chan <!]]))
 
-(def t (js/require "thicket"))
+(def ^:private t (js/require "thicket"))
 
-(def log (thicket.logging/logger "mb.server.main"))
+(def ^:private log (thicket.logging/logger "mb.server.main"))
 
-(defn default-middlewear [req res next]
+(defn- default-middlewear [req res next]
   (do
     (.send res "Hello, world")
     (next)))
 
-(defn start-server [config]
+(defn- start-server [config]
   (let [express (js/require "express")
         app (express)
         port (.getOrError config "port")
@@ -27,16 +27,16 @@
     (.listen app port (fn []
                    (.info log "Listening on port" port)))))
 
-(defn up [config]
+(defn- up [config]
   (.debug log "Going up")
   (let [port (.getOrError config "port")]
     (.debug log "Starting server on port" port)
     (start-server config)))
 
-(defn down [config]
+(defn- down [config]
   (.debug log "Going down"))
 
-(defn -main [& args]
+(defn- -main [& args]
   (aset js/goog "global" "setTimeout" js/setTimeout)
   (thicket.logging/root-set-log-level! "Debug")
   (thicket.logging/root-add-appender! (thicket.logging/console-log-appender))
